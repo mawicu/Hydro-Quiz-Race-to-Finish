@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydro Quiz: Race to Finish</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .name-input-section {
+            background: #fff5f5;
+            border: 2px solid #e53e3e;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .name-input-section h3 {
+            color: #2d3748;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+
+        .name-inputs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .name-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 200px;
+        }
+
+        .name-input-group label {
+            font-weight: bold;
+            color: #4a5568;
+            font-size: 0.95em;
+        }
+
+        .name-input-group input {
+            padding: 12px 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .name-input-group input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .name-input-group input:invalid {
+            border-color: #e53e3e;
+        }
+
+        .how-to-play {
+            background: #f0f8ff;
+            border: 2px solid #4299e1;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .how-to-play h3 {
+            color: #2d3748;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .rules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .rule-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .rule-number {
+            background: #4299e1;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .rule-text {
+            color: #4a5568;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .players-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .player-card {
+            flex: 1;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .player-card.active {
+            border-color: #4299e1;
+            background: #ebf8ff;
+            transform: scale(1.02);
+        }
+
+        .player-card.winner {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .player-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4299e1;
+        }
+
+        .player-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+        }
+
+        .player1-icon {
+            background: #e53e3e;
+        }
+
+        .player2-icon {
+            background: #3182ce;
+        }
+
+        .current-turn {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 10px;
+            border-left: 5px solid #e53e3e;
+        }
+
+        .current-turn h3 {
+            color: #2d3748;
+            font-size: 1.2em;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 15px;
+        }
+
+        .board-cell {
+            aspect-ratio: 1;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .board-cell.start {
+            background: #48bb78;
+            color: white;
+        }
+
+        .board-cell.finish {
+            background: #f6ad55;
+            color: white;
+        }
+
+        .board-cell.special {
+            background: #ed8936;
+            color: white;
+        }
+
+        .players-on-board {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .player-token {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .player1-token {
+            background: #e53e3e;
+        }
+
+        .player2-token {
+            background: #3182ce;
+        }
+
+        .quiz-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .question {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            padding: 12px 15px;
+            border: 2px solid #cbd5e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .option-btn:hover {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+
+        .option-btn.correct {
+            background: #c6f6d5;
+            border-color: #48bb78;
+        }
+
+        .option-btn.incorrect {
+            background: #fed7d7;
+            border-color: #e53e3e;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .feedback.incorrect {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 30px;
+            background: #f0fff4;
+            border: 2px solid #48bb78;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .game-over h2 {
+            color: #22543d;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .winner-stats {
+            background: #e6fffa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .players-info {
+                flex-direction: column;
+            }
+
+            .rules-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>Hydro Quiz: Race to Finish</h1>
+            <p>Selamat datang di "Hydro Quiz: Race to Finish" - petualangan seru dalam dunia hidrolisis garam!</p>
+        </div>
+
+        <div class="how-to-play">
+            <h3> Cara Bermain</h3>
+            <div class="rules-list">
+                <div class="rule-item">
+                    <div class="rule-number">1</div>
+                    <div class="rule-text">Jawablah kuis hidrolisis berikut</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">2</div>
+                    <div class="rule-text">Jawaban benar, pemain akan maju 2 langkah</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">3</div>
+                    <div class="rule-text">Jawaban salah, pemain akan mundur 1 langkah</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">4</div>
+                    <div class="rule-text">Pemain pertama yang mencapai finish (petak 30) menang!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="name-input-section" id="nameInputSection">
+            <h3>Masukkan Nama Pemain</h3>
+            <div class="name-inputs">
+                <div class="name-input-group">
+                    <label for="player1NameInput">Nama Pemain 1:</label>
+                    <input type="text" id="player1NameInput" placeholder="Masukkan nama pemain 1" maxlength="15">
+                </div>
+                <div class="name-input-group">
+                    <label for="player2NameInput">Nama Pemain 2:</label>
+                    <input type="text" id="player2NameInput" placeholder="Masukkan nama pemain 2" maxlength="15">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="startGame()">Mulai Permainan</button>
+        </div>
+
+        <div class="players-info" id="playersInfo" style="display: none;">
+            <div class="player-card" id="player1Card">
+                <div class="player-icon player1-icon">1</div>
+                <div class="player-name" id="player1Name">Pemain 1</div>
+                <div class="player-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Posisi</div>
+                        <div class="stat-value" id="player1Position">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Benar</div>
+                        <div class="stat-value" id="player1Correct">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Salah</div>
+                        <div class="stat-value" id="player1Incorrect">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="player-card" id="player2Card">
+                <div class="player-icon player2-icon">2</div>
+                <div class="player-name" id="player2Name">Pemain 2</div>
+                <div class="player-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Posisi</div>
+                        <div class="stat-value" id="player2Position">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Benar</div>
+                        <div class="stat-value" id="player2Correct">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Salah</div>
+                        <div class="stat-value" id="player2Incorrect">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="current-turn" id="currentTurn" style="display: none;">
+            <h3>Giliran <span id="currentPlayerName">Pemain 1</span></h3>
+        </div>
+
+        <div class="game-board" id="gameBoard" style="display: none;"></div>
+
+        <div class="quiz-section" id="quizSection" style="display: none;">
+            <h2>Kuis Hidrolisis Garam</h2>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="feedback" id="feedback" style="display: none;"></div>
+        </div>
+
+        <div class="controls" id="gameControls" style="display: none;">
+            <button class="btn btn-secondary" onclick="restartGame()">Mulai Ulang</button>
+        </div>
+
+        <div class="game-over" id="gameOver" style="display: none;">
+            <h2>Selamat!!</h2>
+            <div id="winnerMessage"></div>
+            <div class="winner-stats" id="winnerStats"></div>
+            <button class="btn btn-primary" onclick="restartGame()">Main Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Apa yang dimaksud dengan hidrolisis garam?",
+                options: [
+                    "Reaksi garam dengan air yang menghasilkan ion H+ atau OH-",
+                    "Reaksi pembentukan garam dari asam dan basa",
+                    "Reaksi pelarutan garam dalam air",
+                    "Reaksi pengkristalan garam dari larutan"
+                ],
+                correct: 0
+            },
+            {
+                question: "Garam NaCl dalam air akan mengalami hidrolisis...",
+                options: [
+                    "Total (asam dan basa)",
+                    "Parsial asam",
+                    "Parsial basa", 
+                    "Tidak mengalami hidrolisis"
+                ],
+                correct: 3
+            },
+            {
+                question: "Larutan garam CH₃COONa (natrium asetat) bersifat...",
+                options: [
+                    "Asam",
+                    "Basa",
+                    "Netral",
+                    "Amfoter"
+                ],
+                correct: 1
+            },
+            {
+                question: "Garam NH₄Cl terbentuk dari...",
+                options: [
+                    "Asam kuat + basa kuat",
+                    "Asam lemah + basa kuat",
+                    "Asam kuat + basa lemah",
+                    "Asam lemah + basa lemah"
+                ],
+                correct: 2
+            },
+            {
+                question: "Rumus hidrolisis ion CH₃COO⁻ adalah...",
+                options: [
+                    "CH₃COO⁻ + H₂O → CH₃COOH + OH⁻",
+                    "CH₃COO⁻ + H₂O → CH₃COOH + H⁺",
+                    "CH₃COO⁻ → CH₃COO⁺ + 2e⁻",
+                    "CH₃COO⁻ + OH⁻ → CH₃COOH + O₂⁻"
+                ],
+                correct: 0
+            },
+            {
+                question: "pH larutan garam dari asam lemah dan basa kuat akan...",
+                options: [
+                    "< 7 (asam)",
+                    "> 7 (basa)",
+                    "= 7 (netral)",
+                    "Tidak dapat ditentukan"
+                ],
+                correct: 1
+            },
+            {
+                question: "Contoh garam yang mengalami hidrolisis total adalah...",
+                options: [
+                    "NaCl",
+                    "KNO₃",
+                    "CH₃COONH₄",
+                    "Na₂SO₄"
+                ],
+                correct: 2
+            },
+            {
+                question: "Ion NH₄⁺ dalam air akan...",
+                options: [
+                    "Melepaskan OH⁻",
+                    "Menangkap OH⁻",
+                    "Melepaskan H⁺",
+                    "Tidak bereaksi"
+                ],
+                correct: 2
+            },
+            {
+                question: "Garam NaF (natrium fluorida) akan membuat larutan bersifat...",
+                options: [
+                    "Asam karena F⁻ terhidrolisis",
+                    "Basa karena F⁻ terhidrolisis", 
+                    "Netral karena tidak terhidrolisis",
+                    "Asam karena Na+ terhidrolisis"
+                ],
+                correct: 1
+            },
+            {
+                question: "Faktor yang mempengaruhi derajat hidrolisis adalah...",
+                options: [
+                    "Suhu dan konsentrasi saja",
+                    "Kekuatan asam-basa pembentuk garam",
+                    "Warna larutan garam",
+                    "Bentuk kristal garam"
+                ],
+                correct: 1
+            },
+            {
+                question: "Konstanta hidrolisis (Kh) untuk garam dari asam lemah-basa kuat adalah...",
+                options: [
+                    "Kh = Kw/Ka",
+                    "Kh = Kw/Kb", 
+                    "Kh = Ka/Kw",
+                    "Kh = Kb/Kw"
+                ],
+                correct: 0
+            },
+            {
+                question: "Larutan Al₂(SO₄)₃ bersifat asam, karena...",
+                options: [
+                    "SO4²⁻ terhidrolisis menghasilkan H+",
+                    "Al³⁺ terhidrolisis menghasilkan H+",
+                    "Kedua ion terhidrolisis",
+                    "Garam tidak larut dalam air"
+                ],
+                correct: 1
+            },
+            {
+                question: "Hidrolisis parsial terjadi pada garam yang terbentuk dari...",
+                options: [
+                    "Asam kuat dan basa kuat",
+                    "Asam kuat dan basa lemah atau sebaliknya",
+                    "Asam lemah dan basa lemah",
+                    "Semua jenis asam dan basa"
+                ],
+                correct: 1
+            },
+            {
+                question: "Garam K₂CO₃ kalium karbonat akan bersifat...",
+                options: [
+                    "Asam",
+                    "Basa",
+                    "Netral", 
+                    "Amfoter"
+                ],
+                correct: 1
+            },
+            {
+                question: "Rumus untuk menghitung pH garam dari basa lemah-asam kuat adalah...",
+                options: [
+                    "pH = 7 + 1/2(pKw + pKb - pKa - log C)",
+                    "pH = 7 - 1/2(pKw + pKa - pKb - log C)",
+                    "pH = 7 + 1/2(pKa - pKb)",
+                    "pH = 7 - 1/2(pKb - pKa)"
+                ],
+                correct: 1
+            },
+            {
+                question: "Garam berikut yang TIDAK mengalami hidrolisis dalam air adalah...",
+                options: [
+                    "NH₄Cl",
+                    "Na₂CO₃",
+                    "CH₃COONa",
+                    "NaCl"
+                ],
+                correct: 3      
+            },
+            {
+                question: "Ion yang mengalami hidrolisis pada larutan NH₄Cl adalah...",
+                options: [
+                    "NH₄⁺",
+                    "Cl⁻",
+                    "NH₄⁺ dan Cl⁻",
+                    "Tidak ada ion yang terhidrolisis"
+                ],
+                correct: 0
+            },
+            {
+                question: "pH larutan NH₄Cl akan...",
+                options: [
+                    "Sama dengan 7",
+                    "Lebih besar dari 7",
+                    "Kurang dari 7",
+                    "Tidak dapat ditentukan"
+                ],
+                correct: 3
+            },
+            {
+                question: "Ion yang mengalami hidrolisis pada larutan CH₃COONa adalah...",
+                options: [
+                    "CH₃COO⁻",
+                    "Na⁺",
+                    "CH₃COO⁻ dan Na⁺",
+                    "Tidak ada"
+                ],
+                correct: 0
+            },
+            {
+                question: "Reaksi hidrolisis yang terjadi pada ion NH₄⁺ adalah...",
+                options: [
+                    "NH₄⁺ + H₂O → NH₃ + H₃O⁺",
+                    "NH₄⁺ + OH⁻ → NH₃ + H₂O",
+                    "NH₄⁺ → NH₃ + H⁺",
+                    "NH₄⁺ + H₂O → NH₄OH + H⁺"
+                ],
+                correct: 0
+            },
+            {
+                question: "Reaksi hidrolisis pada ion CN⁻ adalah...",
+                options: [
+                    "CN⁻ + H₂O → HCN + OH⁻",
+                    "CN⁻ + H₂O → HCN + H⁺",
+                    "CN⁻ + H₂O → CNH + O₂",
+                    "CN⁻ + H₂O → HCN + O₂⁻"
+                ],
+                correct: 0
+            }
+        ];
+
+        let player1 = {
+            name: "",
+            position: 1,
+            correct: 0,
+            incorrect: 0
+        };
+
+        let player2 = {
+            name: "",
+            position: 1,
+            correct: 0,
+            incorrect: 0
+        };
+
+        let currentPlayer = 1;
+        let currentQuestionIndex = 0;
+        let gameWon = false;
+        let selectedAnswer = null;
+        let gameStarted = false;
+
+        function startGame() {
+            const player1NameInput = document.getElementById('player1NameInput').value.trim();
+            const player2NameInput = document.getElementById('player2NameInput').value.trim();
+            
+            if (!player1NameInput || !player2NameInput) {
+                alert('Mohon masukkan nama untuk kedua pemain!');
+                return;
+            }
+            
+            if (player1NameInput === player2NameInput) {
+                alert('Nama pemain harus berbeda!');
+                return;
+            }
+            
+            player1.name = player1NameInput;
+            player2.name = player2NameInput;
+            
+            document.getElementById('player1Name').textContent = player1.name;
+            document.getElementById('player2Name').textContent = player2.name;
+            
+            // Hide name input section
+            document.getElementById('nameInputSection').style.display = 'none';
+            
+            // Show game elements
+            document.getElementById('playersInfo').style.display = 'flex';
+            document.getElementById('currentTurn').style.display = 'block';
+            document.getElementById('gameBoard').style.display = 'grid';
+            document.getElementById('quizSection').style.display = 'block';
+            document.getElementById('gameControls').style.display = 'flex';
+            
+            gameStarted = true;
+            initBoard();
+            updateStats();
+            updateCurrentTurn();
+            displayQuestion();
+        }
+
+        function initBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            
+            for (let i = 1; i <= 30; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'board-cell';
+                cell.textContent = i;
+                
+                if (i === 1) {
+                    cell.classList.add('start');
+                    cell.textContent = 'START';
+                } else if (i === 30) {
+                    cell.classList.add('finish');
+                    cell.textContent = 'FINISH';
+                } else if ([5, 10, 15, 20, 25].includes(i)) {
+                    cell.classList.add('special');
+                }
+                
+                board.appendChild(cell);
+            }
+            
+            updateBoard();
+        }
+
+        function updateBoard() {
+            const cells = document.querySelectorAll('.board-cell');
+            
+            // Clear all player tokens
+            cells.forEach(cell => {
+                const playersContainer = cell.querySelector('.players-on-board');
+                if (playersContainer) playersContainer.remove();
+            });
+            
+            // Add player tokens
+            [player1, player2].forEach((player, index) => {
+                if (player.position <= 30) {
+                    const cell = cells[player.position - 1];
+                    let playersContainer = cell.querySelector('.players-on-board');
+                    
+                    if (!playersContainer) {
+                        playersContainer = document.createElement('div');
+                        playersContainer.className = 'players-on-board';
+                        cell.appendChild(playersContainer);
+                    }
+                    
+                    const token = document.createElement('div');
+                    token.className = `player-token player${index + 1}-token`;
+                    playersContainer.appendChild(token);
+                }
+            });
+        }
+
+        function updateCurrentTurn() {
+            const turnElement = document.getElementById('currentTurn');
+            const currentPlayerNameElement = document.getElementById('currentPlayerName');
+            const player1Card = document.getElementById('player1Card');
+            const player2Card = document.getElementById('player2Card');
+            
+            const currentPlayerName = currentPlayer === 1 ? player1.name : player2.name;
+            currentPlayerNameElement.textContent = currentPlayerName;
+            
+            if (currentPlayer === 1) {
+                player1Card.classList.add('active');
+                player2Card.classList.remove('active');
+            } else {
+                player2Card.classList.add('active');
+                player1Card.classList.remove('active');
+            }
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0;
+            }
+            
+            const q = questions[currentQuestionIndex];
+            
+            document.getElementById('question').textContent = q.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(answerIndex) {
+            if (selectedAnswer !== null) return;
+            
+            selectedAnswer = answerIndex;
+            const q = questions[currentQuestionIndex];
+            const isCorrect = answerIndex === q.correct;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // Show correct answer
+            buttons[q.correct].classList.add('correct');
+            
+            // Show selected answer if wrong
+            if (!isCorrect) {
+                buttons[answerIndex].classList.add('incorrect');
+            }
+            
+            // Update current player stats
+            const currentPlayerData = currentPlayer === 1 ? player1 : player2;
+            const currentPlayerName = currentPlayerData.name;
+            
+            // Show feedback
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            
+            if (isCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = `Benar! ${currentPlayerName} maju 2 langkah!`;
+                currentPlayerData.correct++;
+                currentPlayerData.position = Math.min(currentPlayerData.position + 2, 30);
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = `Salah! ${currentPlayerName} mundur 1 langkah!`;
+                currentPlayerData.incorrect++;
+                currentPlayerData.position = Math.max(currentPlayerData.position - 1, 1);
+            }
+            
+            updateStats();
+            updateBoard();
+            
+            // Check win condition
+            if (currentPlayerData.position >= 30) {
+                setTimeout(() => {
+                    gameWon = true;
+                    showGameOver();
+                }, 1000);
+            } else {
+                // Switch turns and next question after delay
+                setTimeout(() => {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                    currentQuestionIndex++;
+                    updateCurrentTurn();
+                    displayQuestion();
+                }, 2500);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('player1Position').textContent = player1.position;
+            document.getElementById('player1Correct').textContent = player1.correct;
+            document.getElementById('player1Incorrect').textContent = player1.incorrect;
+            
+            document.getElementById('player2Position').textContent = player2.position;
+            document.getElementById('player2Correct').textContent = player2.correct;
+            document.getElementById('player2Incorrect').textContent = player2.incorrect;
+        }
+
+        function showGameOver() {
+            const winner = player1.position >= 30 ? 1 : 2;
+            const winnerData = winner === 1 ? player1 : player2;
+            const loserData = winner === 1 ? player2 : player1;
+            
+            document.getElementById('winnerMessage').innerHTML = 
+                `<h3> ${winnerData.name} Menang! </h3>`;
+            
+            document.getElementById('winnerStats').innerHTML = `
+                <h4>Statistik Final:</h4>
+                <p><strong>Pemenang (${winnerData.name}):</strong> 
+                   Posisi ${winnerData.position}, ${winnerData.correct} benar, ${winnerData.incorrect} salah</p>
+                <p><strong>${loserData.name}:</strong> 
+                   Posisi ${loserData.position}, ${loserData.correct} benar, ${loserData.incorrect} salah</p>
+            `;
+            
+            // Highlight winner
+            const winnerCard = document.getElementById(`player${winner}Card`);
+            winnerCard.classList.add('winner');
+            
+            document.getElementById('gameOver').style.display = 'block';
+        }
+
+        function restartGame() {
+            player1 = { position: 1, correct: 0, incorrect: 0 };
+            player2 = { position: 1, correct: 0, incorrect: 0 };
+            currentPlayer = 1;
+            currentQuestionIndex = 0;
+            gameWon = false;
+            selectedAnswer = null;
+            
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('player1Card').classList.remove('winner', 'active');
+            document.getElementById('player2Card').classList.remove('winner', 'active');
+            
+            initBoard();
+            updateStats();
+            updateCurrentTurn();
+            displayQuestion();
+        }
+
+        // Initialize game
+        initBoard();
+        updateStats();
+        updateCurrentTurn();
+        displayQuestion();
+    </script>
+</body>
+</html>
